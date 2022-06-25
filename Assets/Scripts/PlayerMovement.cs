@@ -17,7 +17,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isJumping;
     private bool jumpCooldown;
 
-    [Header("Dash")] 
+    [Header("Dash")]
     [SerializeField] private float dashingPower = 24f;
     [SerializeField] private float dashingTime = 0.2f;
     [SerializeField] private float dashingCooldown = 1f;
@@ -27,11 +27,11 @@ public class PlayerMovement : MonoBehaviour
 
     //comps gang
     private Rigidbody2D rb;
-    private BoxCollider2D feetCol;
+    private CapsuleCollider2D playerCol;
     private TrailRenderer tr;
     private Animator animator;
     private SpriteRenderer sr;
-    
+
     //bools gang
     private bool isGrounded;
     private bool canDash = true;
@@ -40,7 +40,7 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        feetCol = GetComponent<BoxCollider2D>();
+        playerCol = GetComponent<CapsuleCollider2D>();
         animator = GetComponent<Animator>();
     }
     private void Update()
@@ -128,7 +128,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnDash()
     {
-        if(canDash)
+        if (canDash)
         {
             StartCoroutine(Dash());
         }
@@ -140,8 +140,10 @@ public class PlayerMovement : MonoBehaviour
         float originalGravity = rb.gravityScale;
         rb.gravityScale = 0f;
         rb.velocity = new Vector2(transform.localScale.x * dashingPower, 0f);
+        animator.SetBool("isDashing", true);
         //tr.emitting = true;
         yield return new WaitForSeconds(dashingTime);
+        animator.SetBool("isDashing", false);
         //tr.emitting = false;
         rb.gravityScale = originalGravity;
         isDashing = false;
@@ -155,7 +157,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Grounded()
     {
-        if (feetCol.IsTouchingLayers(LayerMask.GetMask("Ground")))
+        if (playerCol.IsTouchingLayers(LayerMask.GetMask("Ground")))
         {
             isGrounded = true;
         }
@@ -193,4 +195,6 @@ public class PlayerMovement : MonoBehaviour
 
     #endregion
 }
+
+
 
